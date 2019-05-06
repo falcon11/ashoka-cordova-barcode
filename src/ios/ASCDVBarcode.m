@@ -1,6 +1,8 @@
 /********* ASCDVBarcode.m Cordova Plugin Implementation *******/
 
+#import <AVFoundation/AVFoundation.h>
 #import <Cordova/CDV.h>
+#import "ASCDVBarCodeViewController.h"
 
 typedef NS_ENUM (NSUInteger, ImageType) {
     URI,
@@ -43,37 +45,54 @@ typedef NS_ENUM (NSUInteger, ImageType) {
 
 - (void)readBarcode:(CDVInvokedUrlCommand *)command
 {
-    CDVPluginResult *pluginResult = nil;
-    NSDictionary *options = [command.arguments objectAtIndex:0];
-    ImageType imageType = [[options objectForKey:@"imageType"] integerValue];
-    UIImage *image = nil;
-    switch (imageType) {
-        case URI: {
-            NSString *uri = [options objectForKey:@"uri"];
-            image = [UIImage imageWithContentsOfFile:uri];
-            break;
-        }
-        case BASE64: {
-            NSString *base64 = [options objectForKey:@"base64"];
-            if (![base64 hasPrefix:@"data:image/jpg;base64,"]) {
-                base64 = [NSString stringWithFormat:@"data:image/jpg;base64,%@", base64];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        CDVPluginResult *pluginResult = nil;
+        NSDictionary *options = [command.arguments objectAtIndex:0];
+        ImageType imageType = [[options objectForKey:@"imageType"] integerValue];
+        UIImage *image = nil;
+        switch (imageType) {
+            case URI: {
+                NSString *uri = [options objectForKey:@"uri"];
+                image = [UIImage imageWithContentsOfFile:uri];
+                break;
             }
-            NSURL *url = [NSURL URLWithString:base64];
-            NSData *data = [NSData dataWithContentsOfURL:url];
-            image = [UIImage imageWithData:data];
+            case BASE64: {
+                NSString *base64 = [options objectForKey:@"base64"];
+                if (![base64 hasPrefix:@"data:image/jpg;base64,"]) {
+                    base64 = [NSString stringWithFormat:@"data:image/jpg;base64,%@", base64];
+                }
+                NSURL *url = [NSURL URLWithString:base64];
+                NSData *data = [NSData dataWithContentsOfURL:url];
+                image = [UIImage imageWithData:data];
+                break;
+            }
+            default:
             break;
         }
-        default:
-            break;
-    }
-    NSArray *results = [self decodeImage:image];
-    if (results != nil) {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:results];
-    } else {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-    }
+        NSArray *results = [self decodeImage:image];
+        if (results != nil) {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:results];
+        } else {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+        }
+        
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    });
+}
 
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+- (void)scanBarcode:(CDVInvokedUrlCommand *)command {
+    __block CDVPluginResult *pluginResult = nil;
+    ASCDVBarCodeViewController *vc = [[ASCDVBarCodeViewController alloc] init];
+    __weak __typeof__(self) weakSelf = self;
+    vc.callback = ^(NSError * _Nonnull error, NSArray * _Nonnull results) {
+        if (error) {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.localizedDescription];
+        } else {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:results];
+        }
+        [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    };
+    [self.viewController presentViewController:vc animated:YES completion:nil];
 }
 
 @end

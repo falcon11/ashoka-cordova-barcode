@@ -13,5 +13,7 @@
             </feature>
         </config-file>
         <source-file src="src/ios/ASCDVBarcode.m" />
+        <header-file src="src/ios/ASCDVBarCodeViewController.h" />
+        <source-file src="src/ios/ASCDVBarCodeViewController.m" />
     </platform>
 </plugin>

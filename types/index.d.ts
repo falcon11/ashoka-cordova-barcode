@@ -17,6 +17,7 @@ interface ASCDVBarcode {
      * @param {*} error 
      */
     readBarcode(options: ReadOptions, success: (results: [string]) => void, error: (error: any) => void);
+    scanBarcode(success: (results: [string]) => void, error: (error: any) => void);
 }
 
 interface ReadOptions {

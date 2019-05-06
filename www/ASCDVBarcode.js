@@ -12,4 +12,8 @@ var exec = require('cordova/exec');
 function readBarcode(options, success, error) {
     exec(success, error, 'ASCDVBarcode', 'readBarcode', [options]);
 }
+function scanBarcode(success, error) {
+    exec(success, error, 'ASCDVBarcode', 'scanBarcode', []);
+}
 exports.readBarcode = readBarcode;
+exports.scanBarcode = scanBarcode;

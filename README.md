@@ -5,6 +5,7 @@ A cordova plugin for QRCode read.
 ## Features
 
 1. read local QRCode image
+2. scan barcode
 
 ## Usage
 
@@ -34,6 +35,7 @@ cordova.plugins.ASCDVBarcode.readBarcode(
 ## API
 
 ### `ASCDVBarcode.readBarcode(options: ReadOptions, successCallback: (results: [string]) => void, errorCallback: (error) => void)`
+read barcode from local file
 
 ### ReadOptions
 
@@ -42,3 +44,6 @@ cordova.plugins.ASCDVBarcode.readBarcode(
 | imageType | string | 0: uri; 1: base64                                                         |
 | uri       | string | if imageType == 0, set uri to image path. **don't prefix with `file://`** |
 | base64    | string | if imageType == 1, set base64 to base64 string                            |
+
+### `scanBarcode(success: (results: [string]) => void, error: (error: any) => void)`
+open the camera and scan barcode
