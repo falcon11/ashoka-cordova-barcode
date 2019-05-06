@@ -1,0 +1,17 @@
+{
+  "name": "com.ashoka.cordova.barcode",
+  "version": "0.0.1",
+  "description": "a cordova barcode plugin",
+  "cordova": {
+    "id": "com.ashoka.cordova.barcode",
+    "platforms": [
+      "ios"
+    ]
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-ios"
+  ],
+  "author": "ashoka",
+  "license": "MIT"
+}
