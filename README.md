@@ -37,7 +37,7 @@ cordova.plugins.ASCDVBarcode.readBarcode(
 
 ### ReadOptions
 
-| name      | type   | description                                                               |****
+| name      | type   | description                                                               |
 | --------- | ------ | ------------------------------------------------------------------------- |
 | imageType | string | 0: uri; 1: base64                                                         |
 | uri       | string | if imageType == 0, set uri to image path. **don't prefix with `file://`** |
